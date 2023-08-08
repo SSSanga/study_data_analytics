@@ -1,6 +1,6 @@
 ### TITANIC FROM DISASTER
 #### DDA
-- | Variable | Definition | Key | Opinion
+| Variable | Definition | Key | Opinion
 | --- | --- | --- | --- |
 | survival | Survival | 0 = No, 1 = Yes |
 | pclass | Ticket class | 1 = 1st, 2 = 2nd, 3 = 3rd | |
