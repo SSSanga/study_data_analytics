@@ -25,8 +25,10 @@
 <details>
 <summary>Type Of Contract Channel</summary>
 
+#### DDA
 
 | Variable | Definition | Key | Opinion |
+| --- | --- | --- | --- |
 | id | 고객 id인지 렌탈품목의id인지 | Letter | 범주-명목, 확인결과_..valuecount에서 25777820 이 id가 187이라는데..??일단 id 기준으로 분류 .. ..데이터간 크기와 순서 존재하지 않음. |
 | type_of_contract | '렌탈', '멤버십', nan  | Letter | 범주-순서, 확인결과_렌탈 or 멤버십 기준으로 분류  |
 | type_of_contract2 | 패키지, 홍보, 개별 등 | Letter | 범주-순서, 확인결과_Promotion과 Normal의 valuecount 많음_ contract2 기준 분류 가능|
