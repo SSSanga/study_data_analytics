@@ -1,0 +1,9 @@
+use study_data_analytics 
+
+documents = [
+            {"name": "Alice", "age": 25, "city": "Seoul"},
+            {"name": "Bob", "age": 30, "city": "Busan"},
+            {"name": "Charlie", "age": 35, "city": "Incheon"}
+]
+
+db.mycollection.updateMany({name:Alice}, {$set: {age:26}})
