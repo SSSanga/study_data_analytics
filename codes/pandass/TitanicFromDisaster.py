@@ -40,3 +40,10 @@ print(df_TFD_Marry)
 # 888  NaN  Miss
 # 889   Mr   NaN
 # 890   Mr   NaN
+print(df_TFD_Marry.isnull().sum())
+
+## apply()적용 모르겠습니다
+ynpattern = r'((Mrs?)|(Miss)|([A-Z][a-z]+\.))'
+
+df_TFD_yn = df_TFD['Name'].str.extract(ynpattern)
+print(df_TFD_yn)
