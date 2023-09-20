@@ -52,7 +52,15 @@ select_category='div.c_search_sorting > div > div > div > ul > li:nth-child(5)'
 browser.find_element_by_css_selector(select_category).click()
 
 
-# In[ ]:
+# 리뷰를 긁어오는 순서
+# 1. 상품 페이지네이션이 돌아간다. 
+    #2. 상품 클릭 loop가 돌아간다. 
+        # 3. 리뷰 loop가 돌아간다. 
+        # 리뷰 loop가 끝나면
+    # 상품 클릭 loop가 끝난다. 
+# 상품 클릭 loop가 끝나면 상품 페이지네이션이 진행된다. 
+# 상품 페이지네이션이 끝난다. 
+
 
 
 
