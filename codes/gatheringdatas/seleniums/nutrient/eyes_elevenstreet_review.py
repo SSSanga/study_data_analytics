@@ -30,7 +30,7 @@ options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
 
 
 #open chrome browser
-browser = webdriver.Chrome(executable_path='../../../../../chromedriver.exe', options=options) #webdriver_selenium과 web을 연결해주기위함.
+browser = webdriver.Chrome(executable_path='C:/Users/01-15/Develops/chromedriver.exe', options=options) #webdriver_selenium과 web을 연결해주기위함.
 browser.set_window_size(1560,2000)
 
 
@@ -55,7 +55,7 @@ browser.find_element_by_css_selector(select_category).click()
 # In[6]:
 
 
-## 제품 클릭하기
+## 제품 클릭하기 #section_commonPrd > div.c-search-list > ul > li:nth-child(60) > div
 product_page = '#section_commonPrd > div.c-search-list > ul > li:nth-child(60)'
 product_info=browser.find_element_by_css_selector(product_page)
 product_info.click()
@@ -206,7 +206,7 @@ len(reviews_bundle)
 # In[18]:
 
 
-print(reviews_bundle[367].text)
+print(reviews_bundle[83].text)
 
 
 # - collection에 넣을 column명
@@ -224,7 +224,7 @@ review_content = reviews_bundle[17].find_element_by_css_selector('div.c_product_
 review_date = reviews_bundle[17].find_element_by_css_selector('div.c_product_review_cont > p.side > span').text 
 review_star = reviews_bundle[17].find_element_by_css_selector('p.grade > span > em').text
 review_writer = reviews_bundle[17].find_element_by_css_selector('dl > dt').text 
-review_content, review_date, review_star, review_writer
+print(review_content, review_date, review_star, review_writer)
 
 
 # ### 리뷰보기 multiple

@@ -10,7 +10,7 @@ import subprocess
 import shutil
 
 # 자신 맞는 chrome.exe 위치 변경 필요
-subprocess.Popen(r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:\chrometemp"')
+subprocess.Popen(r'C:\Program Files \Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:\chrometemp"')
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
