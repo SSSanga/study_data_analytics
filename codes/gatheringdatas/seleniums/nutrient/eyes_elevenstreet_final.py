@@ -127,11 +127,12 @@ while current_page <= loop_count_int:
                         
                         # 리뷰 더보기 버튼을 클릭합니다.
                         button_click.click()
-                        time.sleep(3)
+                        time.sleep(10)
                     except:
+                        browser.implicitly_wait(60)
                         # 리뷰 더보기 버튼을 더 이상 찾을 수 없으면 반복 종료합니다.
                         print('리뷰 더보기 버튼을 더 이상 찾을 수 없음')
-                        time.sleep(6) # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
+                         # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
                         break
                 ## 일단 총 리뷰수를 int로 바꾼다. 
                 review_total_count_text = browser.find_element_by_css_selector('h4 > span > i').text
@@ -142,8 +143,8 @@ while current_page <= loop_count_int:
                 # print(result_list[0], int(result_list[0]))
                         
                 review_total_count = int(result_list[0])  # 리뷰 총 갯수
-                review_total_count
-                time.sleep(3)
+                print(review_total_count)
+                time.sleep(30)
                 if review_total_count != 0:
                     ##리뷰 번들
                     reviews_bundle = browser.find_elements_by_css_selector('.review_list_element')
@@ -181,10 +182,11 @@ while current_page <= loop_count_int:
                             except:
                                 print('리뷰완료')
                                 pass  # Break out of the loop if the lengths match
-                    time.sleep(3)
+                    
                     df_reviews = pd.DataFrame(data=reviews_list, columns=eyes_product_columns_name)
                     data_dict = df_reviews.to_dict(orient='records')
                     collection.insert_many(data_dict)
+                    time.sleep(30)
                     print(len(reviews_list))
                     # Check again after the inner loop to break from the outer loop
                     if len(reviews_list) == len(reviews_bundle):
@@ -198,7 +200,7 @@ while current_page <= loop_count_int:
                 browser.close()
                 # 다음 상품을 클릭하기 전에 원래의 창으로 다시 전환합니다.
                 browser.switch_to.window(browser.window_handles[0])
-                time.sleep(5)          
+                time.sleep(10)          
             except:
                 if review_total_count == 0:
                     print('리뷰가 없어 종료합니다.')
