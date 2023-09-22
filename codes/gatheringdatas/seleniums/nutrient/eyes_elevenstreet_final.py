@@ -14,8 +14,8 @@ import pandas as pd
 
 import pymongo as mg
 client = mg.MongoClient(host='mongodb://localhost:27017')
-database = client['study_test']
-collection = database['backache_review']
+database = client['project_nutrients']
+collection = database['eyes_review']
 
 
 # In[3]:
@@ -49,10 +49,13 @@ browser.set_window_size(1560,2000)
 
 
 # url in address window
-## test_눈개선피로 영양제 
-# browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%25ED%2594%25BC%25EB%25A1%259C%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH&sortCd=I&pageNo=1')
+## final
+browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
+
+## test_눈개선루테인 영양제 
+# browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%25EB%25A3%25A8%25ED%2585%258C%25EC%259D%25B8%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
 ## test_허리통증 영양제
-browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25ED%2597%2588%25EB%25A6%25AC%25ED%2586%25B5%25EC%25A6%259D%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH&sortCd=I&pageNo=1')
+# browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25ED%2597%2588%25EB%25A6%25AC%25ED%2586%25B5%25EC%25A6%259D%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH&sortCd=I&pageNo=1')
 browser.implicitly_wait(10)
 
 
@@ -94,17 +97,15 @@ loop_count_int = int(product_total_count / product_standard_count_per)
 print(loop_count_int) ## 상품 총 페이지수 
 
 
-# In[11]:
-
-
 # 현재 페이지 번호를 초기화합니다.
 current_page = 1
 # pagination 버튼을 끝까지 순환하면서 페이지 이동합니다.
 while current_page <= loop_count_int:
     try:
+        
         for i in range(1, 61):  # 1부터 60까지 순회합니다.
             try:
-                browser.implicitly_wait(12)
+                time.sleep(12)
                 product_page = f'#section_commonPrd > div.c-search-list > ul > li:nth-child({i}) > div > a'
                 product = browser.find_element_by_css_selector(product_page)
                 product.click()
@@ -142,6 +143,7 @@ while current_page <= loop_count_int:
                         
                 review_total_count = int(result_list[0])  # 리뷰 총 갯수
                 review_total_count
+                time.sleep(3)
                 if review_total_count != 0:
                     ##리뷰 번들
                     reviews_bundle = browser.find_elements_by_css_selector('.review_list_element')
@@ -179,6 +181,7 @@ while current_page <= loop_count_int:
                             except:
                                 print('리뷰완료')
                                 pass  # Break out of the loop if the lengths match
+                    time.sleep(3)
                     df_reviews = pd.DataFrame(data=reviews_list, columns=eyes_product_columns_name)
                     data_dict = df_reviews.to_dict(orient='records')
                     collection.insert_many(data_dict)
@@ -195,16 +198,23 @@ while current_page <= loop_count_int:
                 browser.close()
                 # 다음 상품을 클릭하기 전에 원래의 창으로 다시 전환합니다.
                 browser.switch_to.window(browser.window_handles[0])
-                          
+                time.sleep(5)          
             except:
                 if review_total_count == 0:
                     print('리뷰가 없어 종료합니다.')
                     break
-        
-            current_page += 1
-            page_button_css = f'#section_commonPrd > nav > ul > li:nth-child({current_page % 10 + 2}) > button'
-            page_button = browser.find_element_by_css_selector(page_button_css)
-            page_button.click()
-    except:
+        if review_total_count == 0:
+            break  # 외부 루프 종료
+
+        if current_page > loop_count_int:
+            print('더 이상 페이지가 없어 종료합니다.')
+            break  # 루프 종료        
+        current_page += 1
+        page_button_css = f'#section_commonPrd > nav > ul > li:nth-child({current_page % 10 + 2}) > button'
+        page_button = browser.find_element_by_css_selector(page_button_css)
+        page_button.click()
+    except:        
         print('더이상 리뷰가 존재하지 않아 종료')
         break
+    
+

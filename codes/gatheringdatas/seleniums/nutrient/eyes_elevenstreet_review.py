@@ -7,7 +7,12 @@
 from selenium import webdriver
 import time
 import pandas as pd
-# import pymongo as mg
+
+import pymongo as mg
+client = mg.MongoClient(host='mongodb://localhost:27017')
+database = client['study_test']
+collection = database['eyes_review']
+
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -37,26 +42,26 @@ browser.set_window_size(1560,2000)
 # In[4]:
 
 
-# url in address window _ 눈 개선 영양제
-browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
-browser.implicitly_wait(3)
+# url in address window _ 눈개선 영양제
+# browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
+## test_눈개선피로 영양제 
+browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%25ED%2594%25BC%25EB%25A1%259C%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH&sortCd=I&pageNo=1')
+
 
 
 # In[5]:
 
-
+time.sleep(2)
 ## 리뷰 많은 순 클릭
 click_path='#layBodyWrap > div > div > div.l_search_content > div.search_content > div.c_search_sorting > div > div > div > div'
 browser.find_element_by_css_selector(click_path).click()
 select_category='div.c_search_sorting > div > div > div > ul > li:nth-child(5)'
 browser.find_element_by_css_selector(select_category).click()
 
-
-# In[6]:
-
+time.sleep(5)
 
 ## 제품 클릭하기 #section_commonPrd > div.c-search-list > ul > li:nth-child(60) > div
-product_page = '#section_commonPrd > div.c-search-list > ul > li:nth-child(60)'
+product_page = '#section_commonPrd > div.c-search-list > ul > li:nth-child(60) > div > a'
 product_info=browser.find_element_by_css_selector(product_page)
 product_info.click()
 
@@ -101,7 +106,7 @@ while not new_window_handle:
 
 
 browser.switch_to.window(new_window_handle)
-
+browser.implicitly_wait(3)
 
 # In[10]:
 
@@ -160,42 +165,39 @@ browser.switch_to.frame('ifrmReview')
 
 
 # In[16]:
-
+time.sleep(15)
 
 while True:
     try:
         # 리뷰 더보기 버튼을 찾습니다.
+        
         button = '#review-list-page-area > div > button'
         button_click=browser.find_element_by_css_selector(button)
         
         # 리뷰 더보기 버튼을 클릭합니다.
         button_click.click()
-        
-        # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
-        time.sleep(2)
-        
-# #         try:
-# #             # 리뷰 내용 더보기 버튼을 찾습니다.
-# #             content_more_selector = '.c_product_btn c_product_btn_more6 review-expand-open-text'
-# #             content_more_button = browser.find_element_by_css_selector(content_more_selector)
-            
-# #             # 리뷰 내용 더보기 버튼을 클릭합니다.
-# #             content_more_button.click()
-            
-# #             # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
-# #             time.sleep(2)
-            
-#         except :
-#             print('안펼쳐짐')
-#             break
-        
+  
     except:
         # 리뷰 더보기 버튼을 더 이상 찾을 수 없으면 반복 종료합니다.
         print('리뷰 더보기 버튼을 더 이상 찾을 수 없음')
+        time.sleep(10) # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
         break
+# while True :
 
-
-# In[17]:
+#     try:
+#         # 리뷰 내용 더보기 버튼을 찾습니다.
+#         content_more_selector = '.c_product_btn c_product_btn_more6 review-expand-open-text'
+#         content_more_button = browser.find_element_by_css_selector(content_more_selector)
+#         browser.implicitly_wait(5)    
+#         # 리뷰 내용 더보기 버튼을 클릭합니다.
+#         content_more_button.click()
+          
+#         # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
+#         time.sleep(2)
+            
+#     except :
+#         print('펼치기완료?')  
+#         break
 
 
 ##리뷰 번들
@@ -206,7 +208,7 @@ len(reviews_bundle)
 # In[18]:
 
 
-print(reviews_bundle[83].text)
+print(reviews_bundle[len(reviews_bundle)-1].text)
 
 
 # - collection에 넣을 column명
@@ -216,14 +218,16 @@ print(reviews_bundle[83].text)
 # - 리뷰 더보기를 클릭하면 ul:nth-child(2) 이게 늘어나고 그 안에서 li:nth-child(8)이게 1부터 10까지 있음. 
 # 이걸 for문 돌려..
 
-# In[19]:
-
-
 # product_name= browser.find_element_by_css_selector('div.c_product_info_title > h1').text
-review_content = reviews_bundle[17].find_element_by_css_selector('div.c_product_review_cont > div > div.cont_text_wrap > p').text ##bundle에서 0번째 가져옴?
-review_date = reviews_bundle[17].find_element_by_css_selector('div.c_product_review_cont > p.side > span').text 
-review_star = reviews_bundle[17].find_element_by_css_selector('p.grade > span > em').text
-review_writer = reviews_bundle[17].find_element_by_css_selector('dl > dt').text 
+# review_content = reviews_bundle[2].find_element_by_css_selector('div.c_product_review_cont > div').text ##bundle에서 0번째 가져옴?
+import re
+
+# review_content에서 <br> 태그와 \n을 제거하고 공백으로 대체
+review_content = reviews_bundle[2].find_element_by_css_selector('div.c_product_review_cont > div').text
+# review_content = re.sub(r'<br\s*/*>|\\n', ' ', review_text)
+review_date = reviews_bundle[2].find_element_by_css_selector('div.c_product_review_cont > p.side > span').text 
+review_star = reviews_bundle[2].find_element_by_css_selector('p.grade > span > em').text
+review_writer = reviews_bundle[2].find_element_by_css_selector('dl > dt').text 
 print(review_content, review_date, review_star, review_writer)
 
 
@@ -241,99 +245,136 @@ print(review_content, review_date, review_star, review_writer)
 ## 에러 처리 필요 ::: 케어네이션... 앱은 리뷰 1.09천개로 표시됩
 ## 일단 총 리뷰수를 int로 바꾼다. 
 review_total_count_text = browser.find_element_by_css_selector('h4 > span > i').text
-    
+
+## 리뷰 리스트
+eyes_product_columns_name = ['product_name','review_content', 'review_date', 'review_star', 'review_writer']
+reviews_list = list()
+
+for number in reviews_bundle:
+        try:
+            try:  
+                review_content = number.find_element_by_css_selector('div.c_product_review_cont > div').text ##bundle에서 0번째 가져옴?
+                # review_content = re.sub(r'<br\s*/*>|\\n', ' ', review_text)
+            except: 
+                review_content = str()
+            try:  
+                review_date = number.find_element_by_css_selector('div.c_product_review_cont > p.side > span').text 
+            except: 
+                review_date = str()
+            try:  
+                review_star = number.find_element_by_css_selector('p.grade > span > em').text
+            except: 
+                review_star = str()
+            try:  
+                review_writer = number.find_element_by_css_selector('dl > dt').text 
+            except: 
+                review_writer = str()
+            
+            # 리뷰 정보를 리스트로 저장하고 리스트에 추가
+            
+            review_data = [product_name, review_content, review_date, review_star, review_writer]
+            # print(review_data)
+            reviews_list.append(review_data)
+
+        except:
+            print('리뷰완료')
+            pass  # Break out of the loop if the lengths match
+df_reviews = pd.DataFrame(data=reviews_list, columns=eyes_product_columns_name)
+data_dict = df_reviews.to_dict(orient='records')
+collection.insert_many(data_dict)
+print(len(reviews_list))
+# Check again after the inner loop to break from the outer loop
+if len(reviews_list) == len(reviews_bundle):
+    print('상품리뷰완료')
+
+
 ## 혜인설명: 총 댓글 수를 정규화로 뽑아냄 .
-import re # reqexpress function
-result_list = re.findall(r'\d+', review_total_count_text)
-# print(result_list[0], int(result_list[0]))
+# import re # reqexpress function
+# result_list = re.findall(r'\d+', review_total_count_text)
+# # print(result_list[0], int(result_list[0]))
         
-review_total_count = int(result_list[0])  # 리뷰 총 갯수
-review_total_count
+# review_total_count = int(result_list[0])  # 리뷰 총 갯수
+# review_total_count
 
 
 # In[21]:
 
 
-review_standard_count_per = 10
+# review_standard_count_per = 10
 
-loop_count_int = int(review_total_count / review_standard_count_per)
-for count in range(1, loop_count_int+1) :
-    try :
-        reviews_bundle = browser.find_elements_by_css_selector('.review_list_element')
-        # print('current reviews_bundle count : {}'.format(len(reviews_bundle)))
-        reviews_bundle[len(reviews_bundle)-1].click()
-        time.sleep(3)
-    except :
-        # print('pass')
-        pass
-print('Done', len(reviews_bundle))
-print(int(loop_count_int))
-
-
-# In[22]:
+# loop_count_int = int(review_total_count / review_standard_count_per)
+# for count in range(1, loop_count_int+1) :
+#     try :
+#         reviews_bundle = browser.find_elements_by_css_selector('.review_list_element')
+#         # print('current reviews_bundle count : {}'.format(len(reviews_bundle)))
+#         reviews_bundle[len(reviews_bundle)-1].click()
+#         time.sleep(3)
+#     except :
+#         # print('pass')
+#         pass
+# print('Done', len(reviews_bundle))
+# print(int(loop_count_int))
 
 
-len(reviews_bundle)
-reviews_list = list()
+# # In[22]:
 
-# 페이지 넘기기를 위한 루프 설정
-for page in range(1, loop_count_int + 2):  # 1부터 loop_count_int + 1까지 반복
-    # ul:nth-child(n) 설정
-    ul_selector = f'ul:nth-child({page})'
 
-    # 한 페이지당 가져올 리뷰 수 설정
-    review_standard_count_per = 10
+# len(reviews_bundle)
+# reviews_list = list()
 
-    for review_num in range(1, review_standard_count_per + 1):
-        try:
-            # 리뷰 내용을 가져오는 코드
-            review_content = browser.find_element_by_css_selector(
-                f'{ul_selector} > li:nth-child({review_num}) > div > div').text
+# # 페이지 넘기기를 위한 루프 설정
+# for page in range(1, loop_count_int + 2):  # 1부터 loop_count_int + 1까지 반복
+#     # ul:nth-child(n) 설정
+#     ul_selector = f'ul:nth-child({page})'
 
-            # "더보기" 버튼이 있는지 확인
-            try:
-                more_button = browser.find_element_by_css_selector(
-                    f'{ul_selector} > li:nth-child({review_num}) > div > div > div > button')
-                more_button.click()  # "더보기" 버튼 클릭
-                review_content += more_button.find_element_by_xpath("./following-sibling::span").text
-                print('펼쳐짐')
-            except :
-                pass
+#     # 한 페이지당 가져올 리뷰 수 설정
+#     review_standard_count_per = 10
 
-            review_date = browser.find_element_by_css_selector(
-                f'{ul_selector} > li:nth-child({review_num}) > div.c_product_review_cont > p.side > span').text
-            review_star = browser.find_element_by_css_selector(
-                f'{ul_selector} > li:nth-child({review_num}) > div > p.grade > span > em').text
-            review_writer = browser.find_element_by_css_selector(
-                f'{ul_selector} > li:nth-child({review_num}) > dl > dt').text
+#     for review_num in range(1, review_standard_count_per + 1):
+#         try:
+#             # 리뷰 내용을 가져오는 코드
+#             review_content = browser.find_element_by_css_selector(
+#                 f'{ul_selector} > li:nth-child({review_num}) > div > div').text
 
-            # 리뷰 정보를 리스트로 저장하고 리스트에 추가
-            review_data = [product_name, review_content, review_date, review_star, review_writer]
-            reviews_list.append(review_data)
+#             # "더보기" 버튼이 있는지 확인
+#             try:
+#                 more_button = browser.find_element_by_css_selector(
+#                     f'{ul_selector} > li:nth-child({review_num}) > div > div > div > button')
+#                 more_button.click()  # "더보기" 버튼 클릭
+#                 review_content += more_button.find_element_by_xpath("./following-sibling::span").text
+#                 print('펼쳐짐')
+#             except :
+#                 pass
 
-        except Exception as e:
-            print(f"Error collecting review {review_num} on page {page}: {str(e)}")
+#             review_date = browser.find_element_by_css_selector(
+#                 f'{ul_selector} > li:nth-child({review_num}) > div.c_product_review_cont > p.side > span').text
+#             review_star = browser.find_element_by_css_selector(
+#                 f'{ul_selector} > li:nth-child({review_num}) > div > p.grade > span > em').text
+#             review_writer = browser.find_element_by_css_selector(
+#                 f'{ul_selector} > li:nth-child({review_num}) > dl > dt').text
+
+#             # 리뷰 정보를 리스트로 저장하고 리스트에 추가
+#             review_data = [product_name, review_content, review_date, review_star, review_writer]
+#             reviews_list.append(review_data)
+
+#         except Exception as e:
+#             print(f"Error collecting review {review_num} on page {page}: {str(e)}")
 
         # Check if the length of reviews_list matches reviews_bundle
-        if len(reviews_list) == len(reviews_bundle):
-            break  # Break out of the loop if the lengths match
-
-    # Check again after the inner loop to break from the outer loop
-    if len(reviews_list) == len(reviews_bundle):
-        break
+        
 
 # # 웹 브라우저 종료
 # browser.quit()
 
 # 수집된 리뷰 출력 또는 저장
-for review_list in reviews_list:
-    print(review_list)
+# for review_list in reviews_list:
+#     print(review_list)
 
 
 # In[23]:
 
 
-len(reviews_list)
+print(len(reviews_list))
 
 
 # In[24]:
