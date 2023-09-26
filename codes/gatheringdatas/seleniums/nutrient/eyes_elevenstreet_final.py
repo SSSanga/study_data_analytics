@@ -49,9 +49,10 @@ browser.set_window_size(1560,2000)
 
 
 # url in address window
-## final
-browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
-
+## final 눈 개선 영양제 
+# browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
+# fianl 눈 영양제 
+browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
 ## test_눈개선루테인 영양제 
 # browser.get('https://search.11st.co.kr/pc/total-search?kwd=%25EB%2588%2588%25EA%25B0%259C%25EC%2584%25A0%25EB%25A3%25A8%25ED%2585%258C%25EC%259D%25B8%2520%25EC%2598%2581%25EC%2596%2591%25EC%25A0%259C&tabId=TOTAL_SEARCH')
 ## test_허리통증 영양제
@@ -103,9 +104,9 @@ current_page = 1
 while current_page <= loop_count_int:
     try:
         
-        for i in range(1, 61):  # 1부터 60까지 순회합니다.
+        for i in range(3, 61):  # 1부터 60까지 순회합니다.
             try:
-                time.sleep(12)
+                time.sleep(5)
                 product_page = f'#section_commonPrd > div.c-search-list > ul > li:nth-child({i}) > div > a'
                 product = browser.find_element_by_css_selector(product_page)
                 product.click()
@@ -127,12 +128,10 @@ while current_page <= loop_count_int:
                         
                         # 리뷰 더보기 버튼을 클릭합니다.
                         button_click.click()
-                        time.sleep(10)
+                        
                     except:
-                        browser.implicitly_wait(60)
-                        # 리뷰 더보기 버튼을 더 이상 찾을 수 없으면 반복 종료합니다.
-                        print('리뷰 더보기 버튼을 더 이상 찾을 수 없음')
-                         # 클릭 후 잠시 대기합니다 (사이트 로딩에 따라 조절)
+                        # 리뷰 더보기 버튼을 더 이상 찾을 수 없으면 반복 종료합니다
+                        print('리뷰 더보기 없음')
                         break
                 ## 일단 총 리뷰수를 int로 바꾼다. 
                 review_total_count_text = browser.find_element_by_css_selector('h4 > span > i').text
@@ -142,9 +141,10 @@ while current_page <= loop_count_int:
                 result_list = re.findall(r'\d+', review_total_count_text)
                 # print(result_list[0], int(result_list[0]))
                         
-                review_total_count = int(result_list[0])  # 리뷰 총 갯수
+                review_total_count = int(result_list[0])  # 리뷰 총 갯수 
                 print(review_total_count)
-                time.sleep(30)
+                time.sleep(10)
+                # 리뷰 50개 이상이면 돌린다. 
                 if review_total_count != 0:
                     ##리뷰 번들
                     reviews_bundle = browser.find_elements_by_css_selector('.review_list_element')
@@ -186,14 +186,14 @@ while current_page <= loop_count_int:
                     df_reviews = pd.DataFrame(data=reviews_list, columns=eyes_product_columns_name)
                     data_dict = df_reviews.to_dict(orient='records')
                     collection.insert_many(data_dict)
-                    time.sleep(30)
+                    time.sleep(5)
                     print(len(reviews_list))
                     # Check again after the inner loop to break from the outer loop
                     if len(reviews_list) == len(reviews_bundle):
                         print('상품리뷰완료')
                     
                 else :
-                    print('리뷰가 없어 종료합니다.') # 리뷰 0이면 종료
+                    print('리뷰가 없어 종료합니다.') # 리뷰 50이하면 종료
                     break
 
                 # 현재 페이지를 닫습니다.
@@ -205,7 +205,7 @@ while current_page <= loop_count_int:
                 if review_total_count == 0:
                     print('리뷰가 없어 종료합니다.')
                     break
-        if review_total_count == 0:
+        if review_total_count < 51:
             break  # 외부 루프 종료
 
         if current_page > loop_count_int:
